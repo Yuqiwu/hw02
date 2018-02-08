@@ -1,12 +1,26 @@
 var box = document.getElementById("box");
 var ctx = box.getContext("2d");
-var stopit = document.getElementById("stop");
 var startit = document.getElementById("start");
-var requestID;
+var stopit = document.getElementById("stop");
+var toggleit = document.getElementById("toggle");
+
+
+// switch between mode
+// 1 for grow and shrink
+// 2 for dvd movement
+var tog = 2; 
+
+// grow and shrink properties
+var requestID1;
 var stat = true;
 var r = 0;
-var oldr = 0;
-var cont = false;
+
+// dvd movement properties
+var requestID2;
+var x = 100;
+var y = 200;
+var vx = 10;
+var vy = 10;
 
 ctx.fillStyle = "red";
 
@@ -14,37 +28,39 @@ var clear = function(){
     ctx.clearRect(0, 0, 500, 500);
 }
 
-var stop = function(){
-    oldr = r;
-    cont = true;
-    window.cancelAnimationFrame( requestID );
-}
-
-var stop2 = function(){
-    window.cancelAnimationFrame( requestID );
-}
-
 var start = function(){
     draw();
 }
 
-var draw = function(){
-    stop2();
-    if (cont == true){
-	r = oldr;
-	cont = false;
+var stop = function(){
+    if ( tog == 1 ){
+	window.cancelAnimationFrame( requestID1 );
     }
     else{
-	oldr = 0;
-	r = 0;
+	window.cancelAnimationFrame( requestID2 );
     }
+}
+
+var toggle = function(){
+    if ( tog == 1 ){
+	tog = 2;
+    }
+    else{
+	tog = 1;
+    }
+    draw();
+    console.log(tog);
+}
+
+var draw = function(){
+    stop();
     
-    var animate = function(){
+    var animate1 = function(){
 	clear();
 	ctx.beginPath();
 	ctx.arc(250, 250, r, 0, 2 * Math.PI);
 	status();
-	requestID = window.requestAnimationFrame(animate);
+	requestID1 = window.requestAnimationFrame(animate1);
 	ctx.fill();
     }
     
@@ -62,11 +78,42 @@ var draw = function(){
 	    }
 	}
     }
-    
-    animate();
+
+    var animate2 = function(){
+	clear();
+	ctx.rect(x,y,10,10);
+	movement();
+	requestID2 = window.requestAnimationFrame(animate2);
+	ctx.fill();
+	console.log("x = " + x);
+	console.log("y = " + y);
+    }
+
+    var movement = function(){
+	if (x == 0 || x == 500){
+	    vx = vx - 2 * vx;
+	}
+	if (y == 0 || y == 500){
+	    vy = vy - 2 * vy;
+	}
+	x = x + vx;
+	y = y + vy;
+    }
+
+
+    if (tog == 1){
+	animate1();
+    }
+    else{
+	animate2();
+    }
 }
 
-stopit.addEventListener("click", stop);
+draw();
+
+
 startit.addEventListener("click", start);
-box.addEventListener("click", draw);
+stopit.addEventListener("click", stop);
+toggleit.addEventListener("click", toggle);
+
 
