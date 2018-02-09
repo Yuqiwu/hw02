@@ -4,11 +4,10 @@ var startit = document.getElementById("start");
 var stopit = document.getElementById("stop");
 var toggleit = document.getElementById("toggle");
 
-
 // switch between mode
 // 1 for grow and shrink
 // 2 for dvd movement
-var tog = 2; 
+var tog = 1; 
 
 // grow and shrink properties
 var requestID1;
@@ -19,8 +18,8 @@ var r = 0;
 var requestID2;
 var x = 100;
 var y = 200;
-var vx = 10;
-var vy = 10;
+var vx = 8;
+var vy = 13;
 
 ctx.fillStyle = "red";
 
@@ -42,6 +41,7 @@ var stop = function(){
 }
 
 var toggle = function(){
+    stop();
     if ( tog == 1 ){
 	tog = 2;
     }
@@ -81,20 +81,20 @@ var draw = function(){
 
     var animate2 = function(){
 	clear();
-	ctx.rect(x,y,10,10);
+	ctx.fillRect(x,y,20,20);
 	movement();
 	requestID2 = window.requestAnimationFrame(animate2);
-	ctx.fill();
+	
 	console.log("x = " + x);
 	console.log("y = " + y);
     }
 
     var movement = function(){
-	if (x == 0 || x == 500){
-	    vx = vx - 2 * vx;
+	if (x <= 0 || x >= 500){
+	    vx = -vx;
 	}
-	if (y == 0 || y == 500){
-	    vy = vy - 2 * vy;
+	if (y <= 0 || y >= 500){
+	    vy = -vy;
 	}
 	x = x + vx;
 	y = y + vy;
@@ -115,5 +115,6 @@ draw();
 startit.addEventListener("click", start);
 stopit.addEventListener("click", stop);
 toggleit.addEventListener("click", toggle);
+
 
 
